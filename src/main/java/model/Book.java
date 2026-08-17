@@ -1,9 +1,13 @@
 package model;
 
-import jakarta.persistence.*;
-import lombok.Data;
-
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.math.BigDecimal;
+import lombok.Data;
 
 @Entity
 @Data
@@ -12,20 +16,20 @@ public class Book {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
     @Column(nullable = false)
-    String title;
+    private String title;
 
     @Column(nullable = false)
-    String author;
+    private String author;
 
     @Column(nullable = false, unique = true)
-    String isbn;
+    private String isbn;
 
     @Column(nullable = false)
-    BigDecimal price;
+    private BigDecimal price;
 
-    String description;
-    String coverImage;
+    private String description;
+    private String coverImage;
 }
