@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.example.bookstorespringboot.dto.BookDto;
 import org.example.bookstorespringboot.dto.BookSearchParametersDto;
 import org.example.bookstorespringboot.dto.CreateBookRequestDto;
+import org.example.bookstorespringboot.dto.UpdateBookRequestDto;
+import org.example.bookstorespringboot.model.SearchOperator;
 import org.example.bookstorespringboot.service.BookService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -40,8 +43,9 @@ public class BookController {
     }
 
     @PutMapping("/{id}")
-    public BookDto updateBook(@PathVariable Long id, @RequestBody BookDto bookDto) {
-        return bookService.update(id, bookDto);
+    public BookDto updateBook(@PathVariable Long id,
+                              @RequestBody UpdateBookRequestDto updateBookRequestDto) {
+        return bookService.update(id, updateBookRequestDto);
     }
 
     @DeleteMapping("/{id}")
@@ -51,7 +55,9 @@ public class BookController {
     }
 
     @GetMapping("/search")
-    public List<BookDto> searchBooks(BookSearchParametersDto searchParameters) {
-        return bookService.searchBooks(searchParameters);
+    public List<BookDto> searchBooks(
+            BookSearchParametersDto searchParameters,
+            @RequestParam(defaultValue = "AND") SearchOperator operator) {
+        return bookService.searchBooks(searchParameters, operator);
     }
 }

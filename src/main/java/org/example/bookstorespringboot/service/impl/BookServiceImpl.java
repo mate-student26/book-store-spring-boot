@@ -5,9 +5,12 @@ import lombok.RequiredArgsConstructor;
 import org.example.bookstorespringboot.dto.BookDto;
 import org.example.bookstorespringboot.dto.BookSearchParametersDto;
 import org.example.bookstorespringboot.dto.CreateBookRequestDto;
+import org.example.bookstorespringboot.dto.UpdateBookRequestDto;
 import org.example.bookstorespringboot.exception.EntityNotFoundException;
+import org.example.bookstorespringboot.exception.NoParamsChoosenException;
 import org.example.bookstorespringboot.mapper.BookMapper;
 import org.example.bookstorespringboot.model.Book;
+import org.example.bookstorespringboot.model.SearchOperator;
 import org.example.bookstorespringboot.repository.BookRepository;
 import org.example.bookstorespringboot.repository.BookSpecificationBuilder;
 import org.example.bookstorespringboot.service.BookService;
@@ -45,17 +48,12 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookDto update(Long id, BookDto bookDto) {
+    public BookDto update(Long id, UpdateBookRequestDto updateBookRequestDto) {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Can't find book by id " + id));
 
-        book.setTitle(bookDto.getTitle());
-        book.setAuthor(bookDto.getAuthor());
-        book.setPrice(bookDto.getPrice());
-        book.setIsbn(bookDto.getIsbn());
-        book.setDescription(bookDto.getDescription());
-        book.setCoverImage(bookDto.getCoverImage());
+        bookMapper.updateBookDto(updateBookRequestDto, book);
 
         Book updatedBook = bookRepository.save(book);
 
@@ -72,8 +70,18 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookDto> searchBooks(BookSearchParametersDto params) {
-        Specification<Book> bookSpecification = bookSpecificationBuilder.build(params);
+    public List<BookDto> searchBooks(BookSearchParametersDto params, SearchOperator operator) {
+
+        if (params.titles() == null
+                && params.authors() == null
+                && params.minPrice() == null
+                && params.maxPrice() == null) {
+            throw new NoParamsChoosenException(
+                    "You must provide at least one search parameter");
+        }
+
+        Specification<Book> bookSpecification = bookSpecificationBuilder.build(params, operator);
+
         return bookRepository.findAll(bookSpecification)
                 .stream()
                 .map(bookMapper::toDto)
