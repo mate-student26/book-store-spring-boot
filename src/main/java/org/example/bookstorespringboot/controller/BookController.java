@@ -3,6 +3,7 @@ package org.example.bookstorespringboot.controller;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.bookstorespringboot.dto.BookDto;
+import org.example.bookstorespringboot.dto.BookSearchParametersDto;
 import org.example.bookstorespringboot.dto.CreateBookRequestDto;
 import org.example.bookstorespringboot.service.BookService;
 import org.springframework.http.HttpStatus;
@@ -47,5 +48,10 @@ public class BookController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteBook(@PathVariable Long id) {
         bookService.deleteById(id);
+    }
+
+    @GetMapping("/search")
+    public List<BookDto> searchBooks(BookSearchParametersDto searchParameters) {
+        return bookService.searchBooks(searchParameters);
     }
 }
