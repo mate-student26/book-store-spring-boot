@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
             NoParamsChosenException ex) {
 
         ErrorResponse error = new ErrorResponse(
-                "NO_PARAMS_CHOOSEN",
+                "NO_PARAMS_CHOSEN",
                 ex.getMessage(),
                 null,
                 LocalDateTime.now());
@@ -44,7 +44,7 @@ public class GlobalExceptionHandler {
             DataIntegrityViolationException ex) {
         ErrorResponse error = new ErrorResponse(
                 "DATABASE_ERROR",
-                ex.getMessage(),
+                "Data integrity violation",
                 null,
                 LocalDateTime.now());
 

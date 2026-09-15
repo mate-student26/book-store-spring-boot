@@ -11,11 +11,9 @@ import org.example.bookstorespringboot.validation.Isbn;
 @Data
 public class CreateBookRequestDto {
 
-    @NotNull
     @NotEmpty
     private String title;
 
-    @NotNull
     @NotEmpty
     private String author;
 
