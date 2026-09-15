@@ -7,7 +7,7 @@ import org.example.bookstorespringboot.dto.BookSearchParametersDto;
 import org.example.bookstorespringboot.dto.CreateBookRequestDto;
 import org.example.bookstorespringboot.dto.UpdateBookRequestDto;
 import org.example.bookstorespringboot.exception.EntityNotFoundException;
-import org.example.bookstorespringboot.exception.NoParamsChoosenException;
+import org.example.bookstorespringboot.exception.NoParamsChosenException;
 import org.example.bookstorespringboot.mapper.BookMapper;
 import org.example.bookstorespringboot.model.Book;
 import org.example.bookstorespringboot.model.SearchOperator;
@@ -28,6 +28,7 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookDto save(CreateBookRequestDto createBookRequestDto) {
         Book book = bookMapper.toModel(createBookRequestDto);
+        book.setIsbn(normalizeIsbn(book.getIsbn()));
         Book saved = bookRepository.save(book);
         return bookMapper.toDto(saved);
     }
@@ -54,7 +55,7 @@ public class BookServiceImpl implements BookService {
                         "Can't find book by id " + id));
 
         bookMapper.updateBookDto(updateBookRequestDto, book);
-
+        book.setIsbn(normalizeIsbn(book.getIsbn()));
         Book updatedBook = bookRepository.save(book);
 
         return bookMapper.toDto(updatedBook);
@@ -76,7 +77,7 @@ public class BookServiceImpl implements BookService {
                 && params.authors() == null
                 && params.minPrice() == null
                 && params.maxPrice() == null) {
-            throw new NoParamsChoosenException(
+            throw new NoParamsChosenException(
                     "You must provide at least one search parameter");
         }
 
@@ -86,5 +87,9 @@ public class BookServiceImpl implements BookService {
                 .stream()
                 .map(bookMapper::toDto)
                 .toList();
+    }
+
+    private String normalizeIsbn(String isbn) {
+        return isbn.replaceAll("[\\s-]", "");
     }
 }
