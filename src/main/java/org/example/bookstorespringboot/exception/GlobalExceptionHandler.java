@@ -71,4 +71,16 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleIsbnAlreadyExistsException(
+            IsbnAlreadyExistsException ex) {
+        ErrorResponse response = new ErrorResponse(
+                "DATA_INTEGRITY_ERROR",
+                ex.getMessage(),
+                null,
+                LocalDateTime.now());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
 }

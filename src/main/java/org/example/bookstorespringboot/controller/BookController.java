@@ -3,7 +3,6 @@ package org.example.bookstorespringboot.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.bookstorespringboot.dto.BookDto;
 import org.example.bookstorespringboot.dto.BookSearchParametersDto;
@@ -11,7 +10,10 @@ import org.example.bookstorespringboot.dto.CreateBookRequestDto;
 import org.example.bookstorespringboot.dto.UpdateBookRequestDto;
 import org.example.bookstorespringboot.model.SearchOperator;
 import org.example.bookstorespringboot.service.BookService;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,7 +36,10 @@ public class BookController {
 
     @GetMapping
     @Operation(summary = "Get all books", description = "Get the list of all books")
-    public List<BookDto> getAll(Pageable pageable) {
+    public Page<BookDto> getAll(
+            @ParameterObject
+            @PageableDefault(size = 10)
+            Pageable pageable) {
         return bookService.findAll(pageable);
     }
 
@@ -66,9 +71,12 @@ public class BookController {
 
     @GetMapping("/search")
     @Operation(summary = "Search books", description = "Search books by specific parameters")
-    public List<BookDto> searchBooks(
+    public Page<BookDto> searchBooks(
+            @ParameterObject
+            @PageableDefault(size = 10)
+            Pageable pageable,
             BookSearchParametersDto searchParameters,
             @RequestParam(defaultValue = "AND") SearchOperator operator) {
-        return bookService.searchBooks(searchParameters, operator);
+        return bookService.searchBooks(searchParameters, operator, pageable);
     }
 }

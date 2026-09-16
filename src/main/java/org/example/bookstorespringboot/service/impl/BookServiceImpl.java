@@ -1,12 +1,12 @@
 package org.example.bookstorespringboot.service.impl;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.example.bookstorespringboot.dto.BookDto;
 import org.example.bookstorespringboot.dto.BookSearchParametersDto;
 import org.example.bookstorespringboot.dto.CreateBookRequestDto;
 import org.example.bookstorespringboot.dto.UpdateBookRequestDto;
 import org.example.bookstorespringboot.exception.EntityNotFoundException;
+import org.example.bookstorespringboot.exception.IsbnAlreadyExistsException;
 import org.example.bookstorespringboot.exception.NoParamsChosenException;
 import org.example.bookstorespringboot.mapper.BookMapper;
 import org.example.bookstorespringboot.model.Book;
@@ -14,6 +14,7 @@ import org.example.bookstorespringboot.model.SearchOperator;
 import org.example.bookstorespringboot.repository.BookRepository;
 import org.example.bookstorespringboot.repository.BookSpecificationBuilder;
 import org.example.bookstorespringboot.service.BookService;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -29,16 +30,23 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookDto save(CreateBookRequestDto createBookRequestDto) {
         Book book = bookMapper.toModel(createBookRequestDto);
+
+        String normalizedIsbn = normalizeIsbn(book.getIsbn());
+
+        if (bookRepository.existsByIsbn(normalizedIsbn)) {
+            throw new IsbnAlreadyExistsException(
+                    "ISBN: " + normalizedIsbn + " already exists!");
+        }
+
         book.setIsbn(normalizeIsbn(book.getIsbn()));
         Book saved = bookRepository.save(book);
         return bookMapper.toDto(saved);
     }
 
     @Override
-    public List<BookDto> findAll(Pageable pageable) {
-        return bookRepository.findAll(pageable).stream()
-                .map(bookMapper::toDto)
-                .toList();
+    public Page<BookDto> findAll(Pageable pageable) {
+        return bookRepository.findAll(pageable)
+                .map(bookMapper::toDto);
     }
 
     @Override
@@ -72,7 +80,9 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookDto> searchBooks(BookSearchParametersDto params, SearchOperator operator) {
+    public Page<BookDto> searchBooks(BookSearchParametersDto params,
+                                     SearchOperator operator,
+                                     Pageable pageable) {
 
         if (params.titles() == null
                 && params.authors() == null
@@ -84,10 +94,8 @@ public class BookServiceImpl implements BookService {
 
         Specification<Book> bookSpecification = bookSpecificationBuilder.build(params, operator);
 
-        return bookRepository.findAll(bookSpecification)
-                .stream()
-                .map(bookMapper::toDto)
-                .toList();
+        return bookRepository.findAll(bookSpecification, pageable)
+                .map(bookMapper::toDto);
     }
 
     private String normalizeIsbn(String isbn) {
