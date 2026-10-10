@@ -63,6 +63,14 @@ public class GlobalExceptionHandler {
                         error.getField(),
                         error.getDefaultMessage()));
 
+        ex.getBindingResult()
+                .getGlobalErrors()
+                .forEach(error ->
+                        errors.put(
+                                error.getObjectName(),
+                                error.getDefaultMessage()
+                        ));
+
         ErrorResponse response = new ErrorResponse(
                 "VALIDATION_ERROR",
                 "Validation failed",
@@ -77,6 +85,18 @@ public class GlobalExceptionHandler {
             IsbnAlreadyExistsException ex) {
         ErrorResponse response = new ErrorResponse(
                 "DATA_INTEGRITY_ERROR",
+                ex.getMessage(),
+                null,
+                LocalDateTime.now());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    @ExceptionHandler(RegistrationException.class)
+    public ResponseEntity<ErrorResponse> handleRegistrationException(
+            RegistrationException ex) {
+        ErrorResponse response = new ErrorResponse(
+                "REGISTRATION_EXCEPTION",
                 ex.getMessage(),
                 null,
                 LocalDateTime.now());
