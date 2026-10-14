@@ -1,37 +1,31 @@
 package org.example.bookstorespringboot.dto;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-import org.example.bookstorespringboot.validation.PasswordMatch;
+import org.example.bookstorespringboot.validation.FieldMatch;
 
 @Data
-@PasswordMatch(message = "Password does not match")
+@FieldMatch(first = "password",
+            second = "repeatPassword",
+            message = "Password does not match")
 public class UserRegistrationRequestDto {
 
-    @NotNull
+    @NotBlank
     private String firstName;
 
-    @NotNull
+    @NotBlank
     private String lastName;
 
-    @NotNull
+    @NotBlank
     @Email
     private String email;
 
     private String shippingAddress;
 
-    @NotNull
-    @Size(min = 8, message = "Password must contain at least 8 characters")
-    @Pattern(
-            regexp = "^(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).*$",
-            message = "Password must contain at least "
-                    + "one uppercase letter and one special character"
-    )
+    @NotBlank
     private String password;
 
-    @NotNull
+    @NotBlank
     private String repeatPassword;
 }
