@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: 005-assign-admin-role
+      author: mate-student26
+      changes:
+        - sql: >
+            INSERT INTO users_roles (user_id, role_id)
+            SELECT u.id, r.id
+            FROM users u, roles r
+            WHERE u.email = 'admin@admin.com'
+            AND r.role = 'ADMIN'
+            
