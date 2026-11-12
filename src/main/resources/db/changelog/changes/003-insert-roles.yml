@@ -1,21 +1,17 @@
 databaseChangeLog:
   - changeSet:
-      id: 002-create-role-table
+      id: 003-insert-roles
       author: mate-student26
       changes:
-        - createTable:
+        - insert:
             tableName: roles
             columns:
               - column:
-                  name: id
-                  type: BIGINT
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
+                  name: role
+                  value: USER
+        - insert:
+           tableName: roles
+           columns:
               - column:
                   name: role
-                  type: VARCHAR(255)
-                  constraints:
-                    nullable: false
-                    unique: true
+                  value: ADMIN

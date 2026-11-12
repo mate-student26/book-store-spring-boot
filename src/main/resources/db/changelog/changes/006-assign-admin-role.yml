@@ -6,7 +6,6 @@ databaseChangeLog:
         - sql: >
             INSERT INTO users_roles (user_id, role_id)
             SELECT u.id, r.id
-            FROM users u, roles r
-            WHERE u.email = 'admin@admin.com'
-            AND r.role = 'ADMIN'
-            
+            FROM users u
+            JOIN roles r ON r.role = 'ADMIN'
+            WHERE u.email = 'admin@admin.com'            
