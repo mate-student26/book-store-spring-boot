@@ -103,4 +103,16 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
+
+    @ExceptionHandler(RoleNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleRoleNotFoundException(
+            RoleNotFoundException ex) {
+        ErrorResponse response = new ErrorResponse(
+                "ROLE_NOT_FOUND",
+                ex.getMessage(),
+                null,
+                LocalDateTime.now());
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    }
 }

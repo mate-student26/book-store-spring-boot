@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.bookstorespringboot.dto.UserRegistrationRequestDto;
 import org.example.bookstorespringboot.dto.UserResponseDto;
 import org.example.bookstorespringboot.exception.RegistrationException;
+import org.example.bookstorespringboot.exception.RoleNotFoundException;
 import org.example.bookstorespringboot.mapper.UserMapper;
 import org.example.bookstorespringboot.model.Role;
 import org.example.bookstorespringboot.model.User;
@@ -34,7 +35,8 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(userRegistrationRequestDto.getPassword()));
 
         Role userRole = roleRepository.findByName(Role.RoleName.USER)
-                .orElseThrow(() -> new RuntimeException("Role Not Found"));
+                .orElseThrow(() -> new RoleNotFoundException(
+                        "USER role is missing in the database"));
 
         user.setRoles(Set.of(userRole));
         User savedUser = userRepository.save(user);

@@ -77,6 +77,7 @@ public class BookController {
 
     @GetMapping("/search")
     @Operation(summary = "Search books", description = "Search books by specific parameters")
+    @PreAuthorize("hasRole('USER')")
     public Page<BookDto> searchBooks(
             @ParameterObject
             @PageableDefault(size = 10)
