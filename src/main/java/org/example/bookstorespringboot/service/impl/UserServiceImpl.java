@@ -1,6 +1,5 @@
 package org.example.bookstorespringboot.service.impl;
 
-import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.example.bookstorespringboot.dto.UserRegistrationRequestDto;
 import org.example.bookstorespringboot.dto.UserResponseDto;
@@ -14,6 +13,7 @@ import org.example.bookstorespringboot.repository.UserRepository;
 import org.example.bookstorespringboot.service.UserService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +24,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
 
+    @Transactional
     @Override
     public UserResponseDto register(UserRegistrationRequestDto userRegistrationRequestDto) {
 
@@ -38,7 +39,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new RoleNotFoundException(
                         "USER role is missing in the database"));
 
-        user.setRoles(Set.of(userRole));
+        user.getRoles().add(userRole);
         User savedUser = userRepository.save(user);
 
         return userMapper.toResponse(savedUser);

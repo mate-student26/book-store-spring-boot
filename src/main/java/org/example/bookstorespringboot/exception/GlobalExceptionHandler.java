@@ -80,7 +80,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(IsbnAlreadyExistsException.class)
     public ResponseEntity<ErrorResponse> handleIsbnAlreadyExistsException(
             IsbnAlreadyExistsException ex) {
         ErrorResponse response = new ErrorResponse(
